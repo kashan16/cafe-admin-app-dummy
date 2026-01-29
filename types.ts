@@ -125,5 +125,25 @@ export type Addon = {
     parentItemId?: string;
 };
 
+export type ReservationStatus = 'pending' | 'reserved' | 'cancelled';
+
+export type ReservationSlot =
+    | '30m'
+    | '60m'
+    | '90m'
+    | '120m'
+    | '120m+';
+
+export interface Reservation {
+    id: string;
+    name: string;
+    phone: string;
+    reason: string;
+    arrival_time: string; // ISO time
+    date: string;         // YYYY-MM-DD
+    slot: ReservationSlot;
+    status: ReservationStatus;
+    created_at: string;
+}
 
 
