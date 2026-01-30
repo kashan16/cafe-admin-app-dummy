@@ -1,5 +1,4 @@
-// lib/dummyOrders.ts
-import { Order, OrderStatus, OrderType } from '@/types';
+import { Order, OrderStatus, OrderType } from "@/types";
 
 export const dummyOrders: Order[] = [
   {
@@ -12,28 +11,13 @@ export const dummyOrders: Order[] = [
     customer_address: null,
     total_amount: 560,
     created_at: new Date().toISOString(),
+    updated_at: new Date(Date.now() + 1000 * 60 * 2).toISOString(), // +2 min
     notes: null,
     order_item: [
-      {
-        item_id: 'item-1',
-        name: 'Paneer Butter Masala',
-        quantity: 2,
-        price: 160
-      },
-      {
-        item_id: 'item-2',
-        name: 'Butter Naan',
-        quantity: 4,
-        price: 220
-      },
-      {
-        item_id: 'item-3',
-        name: 'Cold Drink',
-        quantity: 1,
-        price: 80
-      },
+      { item_id: 'item-1', name: 'Paneer Butter Masala', quantity: 2, price: 160 },
+      { item_id: 'item-2', name: 'Butter Naan', quantity: 4, price: 220 },
+      { item_id: 'item-3', name: 'Cold Drink', quantity: 1, price: 80 },
     ],
-    updated_at: ''
   },
   {
     id: 'order-2',
@@ -45,21 +29,100 @@ export const dummyOrders: Order[] = [
     customer_address: 'Civil Lines, Delhi',
     total_amount: 420,
     created_at: new Date(Date.now() - 1000 * 60 * 12).toISOString(),
+    updated_at: new Date(Date.now() - 1000 * 60 * 5).toISOString(), // updated 7 min later
     notes: 'Less spicy',
     order_item: [
-      {
-        item_id: 'item-4',
-        name: 'Veg Biryani',
-        quantity: 1,
-        price: 220
-      },
-      {
-        item_id: 'item-5',
-        name: 'Raita',
-        quantity: 1,
-        price: 45
-      },
+      { item_id: 'item-4', name: 'Veg Biryani', quantity: 1, price: 220 },
+      { item_id: 'item-5', name: 'Raita', quantity: 1, price: 45 },
     ],
-    updated_at: ''
+  },
+  {
+    id: 'order-3',
+    customer_name: 'Rahul Sharma',
+    status: 'ready' as OrderStatus,
+    type: 'DINE_IN' as OrderType,
+    table_number: 2,
+    customer_phone: null,
+    customer_address: null,
+    total_amount: 750,
+    created_at: new Date(Date.now() - 1000 * 60 * 25).toISOString(),
+    updated_at: new Date(Date.now() - 1000 * 60 * 20).toISOString(),
+    notes: 'Extra butter on naan',
+    order_item: [
+      { item_id: 'item-6', name: 'Dal Makhani', quantity: 1, price: 180 },
+      { item_id: 'item-7', name: 'Paneer Tikka', quantity: 1, price: 260 },
+      { item_id: 'item-2', name: 'Butter Naan', quantity: 4, price: 220 },
+      { item_id: 'item-8', name: 'Sweet Lassi', quantity: 2, price: 90 },
+    ],
+  },
+  {
+    id: 'order-4',
+    customer_name: 'Priya Verma',
+    status: 'preparing' as OrderStatus,
+    type: 'ORDER' as OrderType,
+    table_number: null,
+    customer_phone: '9123456780',
+    customer_address: 'MG Road, Bengaluru',
+    total_amount: 310,
+    created_at: new Date(Date.now() - 1000 * 60 * 8).toISOString(),
+    updated_at: new Date(Date.now() - 1000 * 60 * 2).toISOString(),
+    notes: null,
+    order_item: [
+      { item_id: 'item-9', name: 'Masala Dosa', quantity: 2, price: 200 },
+      { item_id: 'item-10', name: 'Filter Coffee', quantity: 2, price: 110 },
+    ],
+  },
+  {
+    id: 'order-5',
+    customer_name: 'Amit Patel',
+    status: 'completed' as OrderStatus,
+    type: 'TAKEAWAY' as OrderType,
+    table_number: null,
+    customer_phone: '9988776655',
+    customer_address: null,
+    total_amount: 540,
+    created_at: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
+    updated_at: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
+    notes: 'No onions',
+    order_item: [
+      { item_id: 'item-11', name: 'Chole Bhature', quantity: 2, price: 240 },
+      { item_id: 'item-12', name: 'Jeera Rice', quantity: 1, price: 140 },
+      { item_id: 'item-3', name: 'Cold Drink', quantity: 2, price: 160 },
+    ],
+  },
+  {
+    id: 'order-6',
+    customer_name: 'Neha Gupta',
+    status: 'pending' as OrderStatus,
+    type: 'ORDER' as OrderType,
+    table_number: null,
+    customer_phone: '9012345678',
+    customer_address: 'Sector 62, Noida',
+    total_amount: 880,
+    created_at: new Date(Date.now() - 1000 * 60 * 3).toISOString(),
+    updated_at: new Date(Date.now() - 1000 * 60 * 1).toISOString(),
+    notes: 'Call before delivery',
+    order_item: [
+      { item_id: 'item-13', name: 'Chicken Biryani', quantity: 2, price: 420 },
+      { item_id: 'item-5', name: 'Raita', quantity: 2, price: 90 },
+      { item_id: 'item-14', name: 'Gulab Jamun', quantity: 2, price: 120 },
+    ],
+  },
+  {
+    id: 'order-7',
+    customer_name: 'Vikram Singh',
+    status: 'cancelled' as OrderStatus,
+    type: 'DINE_IN' as OrderType,
+    table_number: 6,
+    customer_phone: null,
+    customer_address: null,
+    total_amount: 300,
+    created_at: new Date(Date.now() - 1000 * 60 * 40).toISOString(),
+    updated_at: new Date(Date.now() - 1000 * 60 * 35).toISOString(),
+    notes: 'Customer left early',
+    order_item: [
+      { item_id: 'item-15', name: 'Veg Manchurian', quantity: 1, price: 180 },
+      { item_id: 'item-16', name: 'Hakka Noodles', quantity: 1, price: 120 },
+    ],
   },
 ];
