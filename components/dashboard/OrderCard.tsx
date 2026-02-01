@@ -13,6 +13,32 @@ interface OrderCardProps {
 }
 
 /* -----------------------------------------
+ * SAFE NORMALIZERS
+ * ----------------------------------------*/
+
+function normalizeType(t: unknown): OrderType | null {
+  if (typeof t !== 'string') return null;
+  const v = t.toUpperCase();
+  if (v === 'DINE_IN' || v === 'PACK' || v === 'ORDER') return v;
+  return null;
+}
+
+function normalizeStatus(s: unknown): OrderStatus | null {
+  if (typeof s !== 'string') return null;
+  const v = s.toLowerCase();
+  if (
+    v === 'pending' ||
+    v === 'accepted' ||
+    v === 'preparing' ||
+    v === 'ready' ||
+    v === 'delivered' ||
+    v === 'cancelled'
+  )
+    return v;
+  return null;
+}
+
+/* -----------------------------------------
  * STYLES
  * ----------------------------------------*/
 
@@ -53,6 +79,39 @@ const TYPE_BADGE: Record<OrderType, { label: string; className: string }> = {
 export default function OrderCard({ order, onClick }: OrderCardProps) {
   const [expanded, setExpanded] = useState(false);
 
+  /* ---------- normalize unsafe runtime values ---------- */
+
+  const safeType = normalizeType(order.type);
+  const safeStatus = normalizeStatus(order.status);
+
+  if (!safeType) {
+    console.warn('⚠️ Unknown order.type:', order.type, order.id);
+  }
+
+  if (!safeStatus) {
+    console.warn('⚠️ Unknown order.status:', order.status, order.id);
+  }
+
+  const badge =
+    safeType && TYPE_BADGE[safeType]
+      ? TYPE_BADGE[safeType]
+      : {
+          label: 'UNKNOWN',
+          className: 'bg-gray-200 text-gray-700 border-gray-300',
+        };
+
+  const tintClass =
+    safeType && TYPE_TINT_STYLES[safeType]
+      ? TYPE_TINT_STYLES[safeType]
+      : 'bg-gray-100 border-gray-200';
+
+  const statusClass =
+    safeStatus && STATUS_STYLES[safeStatus]
+      ? STATUS_STYLES[safeStatus]
+      : 'bg-gray-200 text-gray-700';
+
+  /* ---------- items ---------- */
+
   const items = useMemo(() => order.order_item ?? [], [order.order_item]);
 
   const totalItems = useMemo(
@@ -65,19 +124,30 @@ export default function OrderCard({ order, onClick }: OrderCardProps) {
   const visibleItems = expanded ? items : items.slice(0, 2);
   const remainingCount = Math.max(0, items.length - 2);
 
-  const timeText = new Date(order.created_at + 'Z').toLocaleTimeString('en-IN', {
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'Asia/Kolkata',
-  });
+  /* ---------- time ---------- */
+
+  const created = new Date(order.created_at);
+
+const timeText = isNaN(created.getTime())
+  ? '—'
+  : created.toLocaleTimeString('en-IN', {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'Asia/Kolkata',
+    });
+
+
+  /* ---------- context text ---------- */
 
   const contextText =
-    order.type === 'DINE_IN' || order.type === 'PACK'
+    safeType === 'DINE_IN' || safeType === 'PACK'
       ? order.table_number !== null
         ? `#${order.table_number}`
         : '—'
       : order.customer_phone ??
         (order.customer_address ? 'Address added' : '—');
+
+  /* ----------------------------------------- */
 
   return (
     <motion.article
@@ -88,7 +158,7 @@ export default function OrderCard({ order, onClick }: OrderCardProps) {
       onClick={onClick}
       className={[
         'cursor-pointer rounded-xl border p-4 shadow-sm transition-all hover:shadow-md hover:scale-[1.02]',
-        TYPE_TINT_STYLES[order.type],
+        tintClass,
       ].join(' ')}
     >
       {/* HEADER */}
@@ -103,19 +173,19 @@ export default function OrderCard({ order, onClick }: OrderCardProps) {
               variant="outline"
               className={[
                 'text-[10px] font-extrabold px-2 py-0.5 rounded-full',
-                TYPE_BADGE[order.type].className,
+                badge.className,
               ].join(' ')}
             >
-              {TYPE_BADGE[order.type].label}
-              {(order.type === 'DINE_IN' || order.type === 'PACK') &&
+              {badge.label}
+              {(safeType === 'DINE_IN' || safeType === 'PACK') &&
                 order.table_number !== null &&
                 ` • ${order.table_number}`}
             </Badge>
           </div>
 
           <p className="text-xs text-muted-foreground mt-1 truncate">
-            {order.type} <span className="opacity-80">•</span> {contextText}{' '}
-            <span className="opacity-80">•</span> {timeText}
+            {safeType ?? 'UNKNOWN'} <span className="opacity-80">•</span>{' '}
+            {contextText} <span className="opacity-80">•</span> {timeText}
           </p>
         </div>
 
@@ -127,9 +197,9 @@ export default function OrderCard({ order, onClick }: OrderCardProps) {
       {/* STATUS + COUNT */}
       <div className="mt-3 flex items-center justify-between">
         <span
-          className={`px-2 py-0.5 text-[10px] rounded-md font-semibold capitalize ${STATUS_STYLES[order.status]}`}
+          className={`px-2 py-0.5 text-[10px] rounded-md font-semibold capitalize ${statusClass}`}
         >
-          {order.status}
+          {safeStatus ?? 'unknown'}
         </span>
 
         <span className="bg-muted/70 px-2 py-0.5 rounded text-xs font-semibold">
